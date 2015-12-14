@@ -6,7 +6,6 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 catkin_package(CATKIN_DEPENDS
-  omni_msgs
   smach
   smach_ros
   visualization_msgs

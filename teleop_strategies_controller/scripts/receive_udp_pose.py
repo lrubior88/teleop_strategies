@@ -37,37 +37,33 @@ class Receive_udp_pose:
     while True:
 
         data,addr=self.read_socket.recvfrom(1024)
-        if not data:
-            break
+        if data:
+			
+			cmd_msg = PoseStamped()
+			self.deserialize(self.ser_mode, data, cmd_msg) 
+        
+			(pos_x, pos_y, pos_z, rot_x, rot_y, rot_z, rot_w) = _struct_7d.unpack(data[0:56])
+			
+			cmd_msg.header.frame_id = self.frame_id
+			cmd_msg.header.stamp = rospy.Time.now()
+			cmd_msg.pose.position.x = pos_x
+			cmd_msg.pose.position.y = pos_y
+			cmd_msg.pose.position.z = pos_z
+			cmd_msg.pose.orientation.x = rot_x
+			cmd_msg.pose.orientation.y = rot_y
+			cmd_msg.pose.orientation.z = rot_z
+			cmd_msg.pose.orientation.w = rot_w
 
-        (pos_x, pos_y, pos_z, rot_x, rot_y, rot_z, rot_w) = _struct_7d.unpack(data[0:56])
-        cmd_msg = PoseStamped()
-        cmd_msg.header.frame_id = self.frame_id
-        cmd_msg.header.stamp = rospy.Time.now()
-        cmd_msg.pose.position.x = pos_x
-        cmd_msg.pose.position.y = pos_y
-        cmd_msg.pose.position.z = pos_z
-        cmd_msg.pose.orientation.x = rot_x
-        cmd_msg.pose.orientation.y = rot_y
-        cmd_msg.pose.orientation.z = rot_z
-        cmd_msg.pose.orientation.w = rot_w
-
-
-        #~ rospy.loginfo('pos_x %s' % (pos_x))
-        #~ rospy.loginfo('pos_y %s' % (pos_y))
-        #~ rospy.loginfo('pos_z %s' % (pos_z))
-        #~ rospy.loginfo('rot_x %s' % (rot_x))
-        #~ rospy.loginfo('rot_y %s' % (rot_y))
-        #~ rospy.loginfo('rot_z %s' % (rot_z))
-        #~ rospy.loginfo('rot_w %s' % (rot_w))
-
-        self.topic_pub.publish(cmd_msg)
+			self.topic_pub.publish(cmd_msg)
 
   def read_parameter(self, name, default):
     if not rospy.has_param(name):
       rospy.logwarn('Parameter [%s] not found, using default: %s' % (name, default))
     return rospy.get_param(name, default)
 
+  def deserialize(self, mode, data, msg):
+    if (mode == "ros"):
+		
   #~ def loginfo(self, msg):
     #~ rospy.logwarn(self.colors.OKBLUE + str(msg) + self.colors.ENDC)
 

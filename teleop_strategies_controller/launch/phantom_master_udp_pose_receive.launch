@@ -2,7 +2,7 @@
 <launch>
 
   <arg name="topic_name" default="/master_phantom/pose"/>
-  <arg name="read_ip" default="127.0.0.1"/>
+  <arg name="read_ip" default="192.168.0.108"/>
   <arg name="read_port" default="34900"/>
   <arg name="publish_rate" default="1000.0"/>	
   <arg name="ref_frame" default="world"/>
