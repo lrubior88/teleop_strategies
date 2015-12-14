@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
-  <name>teleop_strategies_controller</name>
-  <description>The teleop_strategies_controller package</description>
+  <name>teleop_msgs</name>
+  <description>The teleop_msgs package</description>
 
   <version>0.1.0</version>
   <maintainer email="l.rubiorod@gmail.com">Luis E. Rubio Rodriguez</maintainer>
@@ -9,17 +9,15 @@
   <url type="website">https://github.com/lrubior88/teleop_strategies_controller</url>
   <url type="repository">https://github.com/lrubior88/teleop_strategies_controller</url>
   <author>Luis E. Rubio Rodriguez</author>
-
+  
   <buildtool_depend>catkin</buildtool_depend>
-  
   <build_depend>geometry_msgs</build_depend>
-  <build_depend>visualization_msgs</build_depend>
-  <build_depend>teleop_msgs</build_depend>
-  
-  <run_depend>smach</run_depend>
-  <run_depend>smach_ros</run_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
   <run_depend>geometry_msgs</run_depend>
-  <run_depend>visualization_msgs</run_depend>
-  <run_depend>teleop_msgs</run_depend>
-
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <build_depend>message_generation</build_depend>
+  <run_depend>message_runtime</run_depend>
+  
 </package>
