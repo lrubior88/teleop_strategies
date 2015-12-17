@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<launch>
+ 
+  <arg name="master_device" default="phantom"/>
+  <arg name="read_ip" default="192.168.0.108"/>
+  <arg name="read_port_pose" default="34900"/>
+  <arg name="read_port_button" default="34901"/>
+  <arg name="write_ip" default="192.168.0.108"/>
+  <arg name="write_port" default="34902"/>
+  <arg name="publish_rate" default="1000.0"/>	
+  <arg name="ref_frame" default="world"/>
+   
+  <!-- Receive UDP Nodes -->
+  <node name="master_$(arg master_device)_receive_udp_pose" pkg="teleop_strategies_controller" type="receive_udp_info.py" output="screen">
+	<param name="type_info" type="string" value="pose_vel"/>
+	<param name="pose_topic" type="string" value="/master_$(arg master_device)/pose"/>
+	<param name="vel_topic" type="string" value="/master_$(arg master_device)/velocity"/>
+    <param name="read_ip" type="string" value="$(arg read_ip)"/>
+    <param name="read_port" type="int" value="$(arg read_port_pose)"/>
+    <param name="publish_rate" type="double" value="$(arg publish_rate)"/>
+    <param name="ref_frame" type="string" value="$(arg ref_frame)"/>
+  </node>
+  
+  <node name="master_$(arg master_device)_receive_udp_button" pkg="teleop_strategies_controller" type="receive_udp_info.py" output="screen">
+	<param name="type_info" type="string" value="button_2"/>
+	<param name="button_topic" type="string" value="/master_$(arg master_device)/button"/>
+    <param name="read_ip" type="string" value="$(arg read_ip)"/>
+    <param name="read_port" type="int" value="$(arg read_port_button)"/>
+    <param name="publish_rate" type="double" value="$(arg publish_rate)"/>
+    <param name="ref_frame" type="string" value="$(arg ref_frame)"/>
+  </node>
+  
+  <!-- Send UDP Nodes -->
+  <node name="master_$(arg master_device)_send_udp_force" pkg="teleop_strategies_controller" type="send_udp_info.py" output="screen">
+	<param name="type_info" type="string" value="force_3"/>
+	<param name="force_topic" type="string" value="/master_$(arg master_device)/force_feedback"/>
+    <param name="write_ip" type="string" value="$(arg write_ip)"/>
+    <param name="write_port" type="int" value="$(arg write_port)"/>
+    <param name="publish_rate" type="double" value="$(arg publish_rate)"/>
+  </node>
+     
+</launch>
