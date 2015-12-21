@@ -12,7 +12,7 @@
   <arg name="units" default="mm"/>
    
   <!-- Receive UDP Nodes -->
-  <node name="master_$(arg master_device)_receive_udp_pose" pkg="teleop_strategies_controller" type="receive_udp_info.py" output="screen">
+  <node name="master_$(arg master_device)_UDP_receive_pose" pkg="teleop_strategies_controller" type="UDP_receive_info.py" output="screen">
 	<param name="type_info" type="string" value="pose_vel"/>
 	<param name="pose_topic" type="string" value="/master_$(arg master_device)/pose"/>
 	<param name="vel_topic" type="string" value="/master_$(arg master_device)/velocity"/>
@@ -23,7 +23,7 @@
     <param name="units" type="string" value="$(arg units)"/>
   </node>
   
-  <node name="master_$(arg master_device)_receive_udp_button" pkg="teleop_strategies_controller" type="receive_udp_info.py" output="screen">
+  <node name="master_$(arg master_device)_UDP_receive_button_button" pkg="teleop_strategies_controller" type="UDP_receive_info.py" output="screen">
 	<param name="type_info" type="string" value="button_2"/>
 	<param name="button_topic" type="string" value="/master_$(arg master_device)/button"/>
     <param name="read_ip" type="string" value="$(arg read_ip)"/>
@@ -34,7 +34,7 @@
   </node>
   
   <!-- Send UDP Nodes -->
-  <node name="master_$(arg master_device)_send_udp_force" pkg="teleop_strategies_controller" type="send_udp_info.py" output="screen">
+  <node name="master_$(arg master_device)_UDP_send_force" pkg="teleop_strategies_controller" type="UDP_send_info.py" output="screen">
 	<param name="type_info" type="string" value="force_3"/>
 	<param name="force_topic" type="string" value="/master_$(arg master_device)/force_feedback"/>
     <param name="write_ip" type="string" value="$(arg write_ip)"/>

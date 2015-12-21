@@ -15,7 +15,7 @@ for i in range(10):
   _struct_d[i] = struct.Struct("<" + str(i+1) + "d")
 
 
-class Receive_udp_info:
+class UDP_receive_info:
   def __init__(self):
       
     # Read parameters
