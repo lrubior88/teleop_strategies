@@ -24,6 +24,16 @@ class Receive_udp_info:
     self.type_info = self.read_parameter('~type_info', 'pose')
     self.publish_rate = self.read_parameter('~publish_rate', '1000.0')
     self.ref_frame = self.read_parameter('~ref_frame', 'world')
+    self.units = self.read_parameter('~units', 'm')
+    
+    if (self.units == "mm"):
+        self.unit_scale = 0.001
+    elif (self.units == "cm"):
+        self.unit_scale = 0.01
+    elif (self.units == "dm"):
+        self.unit_scale = 0.1
+    else:
+        self.unit_scale = 1
     
     if (self.type_info == "pose"):
         self.pose_topic = self.read_parameter('~pose_topic', '/master_phantom/pose')
@@ -66,9 +76,9 @@ class Receive_udp_info:
                 cmd_msg = PoseStamped()
                 cmd_msg.header.frame_id = self.ref_frame
                 cmd_msg.header.stamp = rospy.Time.now()
-                cmd_msg.pose.position.x = pos_x
-                cmd_msg.pose.position.y = pos_y
-                cmd_msg.pose.position.z = pos_z
+                cmd_msg.pose.position.x = pos_x * self.unit_scale
+                cmd_msg.pose.position.y = pos_y * self.unit_scale
+                cmd_msg.pose.position.z = pos_z * self.unit_scale
                 cmd_msg.pose.orientation.x = rot_x
                 cmd_msg.pose.orientation.y = rot_y
                 cmd_msg.pose.orientation.z = rot_z
@@ -82,9 +92,9 @@ class Receive_udp_info:
                 cmd_msg = PoseStamped()
                 cmd_msg.header.frame_id = self.ref_frame
                 cmd_msg.header.stamp = rospy.Time.now()
-                cmd_msg.pose.position.x = pos_x
-                cmd_msg.pose.position.y = pos_y
-                cmd_msg.pose.position.z = pos_z
+                cmd_msg.pose.position.x = pos_x * self.unit_scale
+                cmd_msg.pose.position.y = pos_y * self.unit_scale
+                cmd_msg.pose.position.z = pos_z * self.unit_scale
                 cmd_msg.pose.orientation.x = rot_x
                 cmd_msg.pose.orientation.y = rot_y
                 cmd_msg.pose.orientation.z = rot_z
@@ -94,9 +104,9 @@ class Receive_udp_info:
                 vel_msg = TwistStamped()
                 vel_msg.header.frame_id = self.ref_frame
                 vel_msg.header.stamp = cmd_msg.header.stamp
-                vel_msg.twist.linear.x = vel_x
-                vel_msg.twist.linear.y = vel_y
-                vel_msg.twist.linear.z = vel_z
+                vel_msg.twist.linear.x = vel_x * self.unit_scale
+                vel_msg.twist.linear.y = vel_y * self.unit_scale
+                vel_msg.twist.linear.z = vel_z * self.unit_scale
                 self.vel_topic_pub.publish(vel_msg)
                 
             elif (self.type_info.split('_')[0] == "button"):
@@ -116,13 +126,13 @@ class Receive_udp_info:
                 f_msg = WrenchStamped()
                 f_msg.header.frame_id = self.ref_frame
                 f_msg.header.stamp = rospy.Time.now()
-                f_msg.wrench.force.x = forces[0]
-                f_msg.wrench.force.y = forces[1]
-                f_msg.wrench.force.z = forces[2]
+                f_msg.wrench.force.x = forces[0] * self.unit_scale
+                f_msg.wrench.force.y = forces[1] * self.unit_scale
+                f_msg.wrench.force.z = forces[2] * self.unit_scale
                 if (n == 6):
-                    f_msg.wrench.torque.x = forces[3]
-                    f_msg.wrench.torque.y = forces[4]
-                    f_msg.wrench.torque.z = forces[5]             
+                    f_msg.wrench.torque.x = forces[3] * self.unit_scale
+                    f_msg.wrench.torque.y = forces[4] * self.unit_scale
+                    f_msg.wrench.torque.z = forces[5] * self.unit_scale             
                 
                 self.force_topic_pub.publish(f_msg)
       #~ except:

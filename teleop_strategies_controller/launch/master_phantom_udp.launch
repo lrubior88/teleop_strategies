@@ -9,6 +9,7 @@
   <arg name="write_port" default="34902"/>
   <arg name="publish_rate" default="1000.0"/>	
   <arg name="ref_frame" default="world"/>
+  <arg name="units" default="mm"/>
    
   <!-- Receive UDP Nodes -->
   <node name="master_$(arg master_device)_receive_udp_pose" pkg="teleop_strategies_controller" type="receive_udp_info.py" output="screen">
@@ -19,6 +20,7 @@
     <param name="read_port" type="int" value="$(arg read_port_pose)"/>
     <param name="publish_rate" type="double" value="$(arg publish_rate)"/>
     <param name="ref_frame" type="string" value="$(arg ref_frame)"/>
+    <param name="units" type="string" value="$(arg units)"/>
   </node>
   
   <node name="master_$(arg master_device)_receive_udp_button" pkg="teleop_strategies_controller" type="receive_udp_info.py" output="screen">
@@ -28,6 +30,7 @@
     <param name="read_port" type="int" value="$(arg read_port_button)"/>
     <param name="publish_rate" type="double" value="$(arg publish_rate)"/>
     <param name="ref_frame" type="string" value="$(arg ref_frame)"/>
+    <param name="units" type="string" value="$(arg units)"/>
   </node>
   
   <!-- Send UDP Nodes -->

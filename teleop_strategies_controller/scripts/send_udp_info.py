@@ -123,7 +123,6 @@ class Send_udp_info:
         elif (self.type_info.split('_')[0] == "force"):
             
             n = int(self.type_info.split('_')[1])
-            rospy.loginfo('n: %d',(n))
             
             # Serialize a WrenchStamp msg
             force_x = self.force_msg.wrench.force.x
@@ -139,7 +138,6 @@ class Send_udp_info:
                 buff.write(_struct_d[2].pack(force_x, force_y, force_z))
         
         # Send Buffer value
-        rospy.logwarn('value: %s',(buff.getvalue()))
         self.write_socket.sendto(buff.getvalue(), (self.write_ip, self.write_port))
    
     except struct.error, se: self._check_types(se)
