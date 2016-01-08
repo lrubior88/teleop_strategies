@@ -15,11 +15,10 @@
 	<param name="master_name" type="string" value="$(arg master_name)"/>
 	<param name="robot_name" type="string" value="$(arg robot_name)"/>
     <param name="publish_rate" type="double" value="$(arg publish_rate)"/>
-    <param name="ref_frame" type="string" value="$(arg ref_frame)"/>
-    <param name="units" type="string" value="$(arg units)"/>
     <param name="strategy" type="string" value="$(arg strategy)"/>
     <param name="n_button" type="int" value="$(arg n_button)"/>
-    <param name="buttons_topic" type="string" value="buttons_topic"/>
+    <param name="buttons_topic" type="string" value="$(arg buttons_topic)"/>
+    <rosparam command="load" file="$(find teleop_strategies)/config/bubble_rate_pos.yaml" />
   </node>
 
      
