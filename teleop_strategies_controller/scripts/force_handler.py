@@ -30,11 +30,11 @@ class Force_handler:
     self.ref_frame = self.read_parameter('~ref_frame', 'world')
 
     # Topic names
-    self.master_pose_topic = '/%s/pose' % master_name
-    self.master_vel_topic = '/%s/velocity' % master_name
-    self.feedback_topic = '/%s/force_feedback' % master_name
+    self.master_pose_topic = '/master_%s/pose' % master_name
+    self.master_vel_topic = '/master_%s/velocity' % master_name
+    self.feedback_topic = '/master_%s/force_feedback' % master_name
     self.sm_control_topic = '/teleop_controller/current_sm'
-    self.ext_forces_topic = '/%s/external_forces' % robot_name
+    self.ext_forces_topic = '/robot_%s/external_forces' % robot_name
     
     # Transformation axes pose parameter
     self.position_axes = [0, 1, 2]

@@ -61,12 +61,12 @@ class StateMachine:
     self.vib_time = self.read_parameter('~vibration/duration', 0.3)   # Duration (s)
     
     # Topic names
-    self.master_pose_topic = '/%s/pose' % master_name
+    self.master_pose_topic = '/master_%s/pose' % master_name
     if (self.n_button > 0):
         self.buttons_topic = self.read_parameter('~buttons_topic', '/teleop_controller/buttons')
-    self.robot_collision_topic = '/%s/collision' % robot_name
     self.sm_control_topic = '/teleop_controller/current_sm'
-    self.robot_gripper_topic = '/%s/gripper_cmd' % robot_name
+    self.robot_collision_topic = '/robot_%s/collision' % robot_name
+    self.robot_gripper_topic = '/robot_%s/gripper_cmd' % robot_name
       
     # Initial values
     self.vib_start_time = 0.0
