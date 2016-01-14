@@ -5,6 +5,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp rospy message_generation geometry
 
 add_message_files(FILES 
 		Button5.msg
+		Button2.msg
 		)
 
 generate_messages(DEPENDENCIES geometry_msgs sensor_msgs std_msgs)

@@ -27,7 +27,7 @@ class HybridController:
     # Rate-pos parameters
     self.strategy = self.read_parameter('~strategy','bubble_rate_pos')
     self.bubble_radius = self.read_parameter('~bubble_radius', 0.5)
-    self.pos_scale = self.read_parameter('~pos_scale', 4)
+    self.scale = self.read_parameter('~scale', 4)
     
     # Topic names
     self.master_pose_topic = '/master_%s/pose' % master_name
@@ -67,7 +67,7 @@ class HybridController:
         q_a1 = tr.quaternion_about_axis(self.angle_arot_1, self.axes_arot_1)
         q_a2 = tr.quaternion_about_axis(self.angle_arot_2, self.axes_arot_2)
         q_a3 = tr.quaternion_about_axis(self.angle_arot_3, self.axes_arot_3)
-        self.q_arot_value = tr.quaternion_multiply(q_a1, tr.quaternion_multiply(q_a2.q_a3))
+        self.q_arot_value = tr.quaternion_multiply(q_a1, tr.quaternion_multiply(q_a2,q_a3))
     
     self.axes_mrot_1 = self.read_parameter('~axes_mrot_1', [0, 0, 0])
     self.angle_mrot_1 = self.read_parameter('~angle_mrot_1', 0.0)
@@ -80,7 +80,7 @@ class HybridController:
         q_m1 = tr.quaternion_about_axis(self.angle_mrot_1, self.axes_mrot_1)
         q_m2 = tr.quaternion_about_axis(self.angle_mrot_2, self.axes_mrot_2)
         q_m3 = tr.quaternion_about_axis(self.angle_mrot_3, self.axes_mrot_3)
-        self.q_mrot_value = tr.quaternion_multiply(q_m3, tr.quaternion_multiply(q_m2.q_m1))
+        self.q_mrot_value = tr.quaternion_multiply(q_m3, tr.quaternion_multiply(q_m2,q_m1))
     
     # Initial values
     self.master_pos = None
@@ -91,7 +91,7 @@ class HybridController:
     self.slave_synch_pos = np.zeros(3)
     self.slave_synch_rot = np.array([0.0, 0.0, 0.0, 1.0])
     self.sm_control = 0.0
-    self.new_sm_signal = False
+    self.new_sm_signal = True
     
     # Setup Subscribers/Publishers
     self.ik_mc_pub = rospy.Publisher(self.ik_mc_topic, PoseStamped)
@@ -101,19 +101,19 @@ class HybridController:
     rospy.Subscriber(self.robot_pose_topic, PoseStamped, self.cb_robot_pose)
     rospy.Subscriber(self.sm_control_topic, Float64, self.cb_sm_control)
     
-    self.loginfo('Waiting for [%s] topic' % (self.master_pose_topic))
-    self.loginfo('Waiting for [%s] topic' % (self.robot_pose_topic))
+    rospy.loginfo('Waiting for [%s] topic' % (self.master_pose_topic))
+    rospy.loginfo('Waiting for [%s] topic' % (self.robot_pose_topic))
     while not rospy.is_shutdown():
       if (self.master_pos == None) or (self.robot_pos == None):
         rospy.sleep(0.01)
       else:
-        self.loginfo('Rate position controller running')
+        rospy.loginfo('Rate position controller running')
         # Register rospy shutdown hook
         rospy.on_shutdown(self.shutdown_hook)
         break
     
     #Timer for publish ik_commands
-    self.loginfo('Publisher frequency: [%f]' % self.publish_frequency)
+    rospy.loginfo('Publisher frequency: [%f]' % self.publish_frequency)
     self.timer = rospy.Timer(rospy.Duration(1.0/self.publish_frequency), self.publish_command)
     rospy.spin()
 
@@ -191,9 +191,9 @@ class HybridController:
         self.command_pos = np.array(self.robot_pos)
         self.command_rot = np.array(self.robot_rot)
         if (self.strategy == 'bubble_rate_pos'):
-            self.draw_position_region
+            self.draw_position_region(self.robot_synch_pos)
       else:
-        self.command_pos = self.robot_synch_pos + (self.master_pos * self.pos_scale)
+        self.command_pos = self.robot_synch_pos + (self.master_pos * self.scale)
         self.command_rot = np.array(self.master_rot)
 
     # RATE_CONTROL
@@ -205,10 +205,10 @@ class HybridController:
         self.robot_synch_pos = np.array(self.robot_pos)
         self.robot_synch_rot = np.array(self.robot_rot)
         self.rate_pivot = np.array(self.master_pos)
-        if (self.strategy == 'bubble_rate_pos'):
-            self.delete_position_region
+        #~ if (self.strategy == 'bubble_rate_pos'):
+            #~ self.delete_position_region()
       else:
-        distance = sqrt(np.sum((self.master_pos - self.rate_pivot) ** 2))* self.pos_scale
+        distance = sqrt(np.sum((self.master_pos - self.rate_pivot) ** 2))* self.scale
         self.command_pos += (self.rate_gain * distance * self.normalize_vector(self.master_pos))
         self.command_rot = np.array(self.robot_synch_rot)
         
@@ -216,8 +216,10 @@ class HybridController:
     else:
       if (self.new_sm_signal):
         self.new_sm_signal = False
-      self.command_pos = np.array(self.robot_pos)
-      self.command_rot = np.array(self.robot_rot)     
+        self.robot_synch_pos = np.array(self.robot_pos)
+        self.robot_synch_rot = np.array(self.robot_rot)
+      self.command_pos = np.array(self.robot_synch_pos)
+      self.command_rot = np.array(self.robot_synch_rot)     
     
     # PoseStamped message
     position, orientation = self.command_pos, self.command_rot
@@ -250,16 +252,20 @@ class HybridController:
     #~ Publish
     self.vis_pub.publish(marker)
     
-  def delete_position_region(self, center_pos):
-    marker = Marker()
-    marker.header.frame_id = self.ref_frame
-    marker.header.stamp = rospy.Time.now()
-    marker.id = 0;
-    marker.type = marker.SPHERE
-    marker.ns = 'position_region'
-    marker.action = marker.DELETE
-    #~ Publish
-    self.vis_pub.publish(marker)
+  #~ def delete_position_region(self, center_pos):
+    #~ marker = Marker()
+    #~ marker.header.frame_id = self.ref_frame
+    #~ marker.header.stamp = rospy.Time.now()
+    #~ marker.id = 0;
+    #~ marker.type = marker.SPHERE
+    #~ marker.ns = 'position_region'
+    #~ marker.action = marker.DELETE
+    #~ self.vis_pub.publish(marker)
+    
+  def read_parameter(self, name, default):
+    if not rospy.has_param(name):
+      rospy.logwarn('Parameter [%s] not found, using default: %s' % (name, default))
+    return rospy.get_param(name, default)
 
 if __name__ == '__main__':
     rospy.init_node('Hybrid_Controller', log_level=rospy.WARN)

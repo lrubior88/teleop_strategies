@@ -72,8 +72,8 @@ class Force_handler:
     rospy.Subscriber(self.ext_forces_topic, WrenchStamped, self.cb_ext_forces)
     
     # Initial values
-    self.master_pose = np.zeros(3)
-    self.master_velocity = np.zeros(3)
+    self.master_pos = np.zeros(3)
+    self.master_vel = np.zeros(3)
     self.ext_forces = np.zeros(3)
     self.force_feedback = np.zeros(3)
     self.sm_control = 4.0 # GO_TO_CENTER
@@ -93,7 +93,7 @@ class Force_handler:
     return result    
             
   def cb_master_pose(self, msg):
-    self.master_pose = np.array([msg.pose.position.x, msg.pose.position.y, msg.pose.position.z])
+    self.master_pos = np.array([msg.pose.position.x, msg.pose.position.y, msg.pose.position.z])
   def cb_master_velocity(self, msg):
     self.master_vel = np.array([msg.twist.linear.x, msg.twist.linear.y, msg.twist.linear.z])
     self.master_dir = self.normalize_vector(self.master_vel)   
@@ -123,10 +123,10 @@ class Force_handler:
   def send_feedback(self, event):
     # POSITION_CONTROL
     if (self.sm_control == 1.0):
-        self.force_feedback = change_force_axes(self.ext_forces)
+        self.force_feedback = self.change_force_axes(self.ext_forces)
     # RATE_CONTROL
     elif (self.sm_control == 2.0):
-        self.force_feedback = change_force_axes(self.ext_forces) + (self.k_rate * self.master_pos + self.b_rate * self.master_vel) * -1.0
+        self.force_feedback = self.change_force_axes(self.ext_forces) + (self.k_rate * self.master_pos + self.b_rate * self.master_vel) * -1.0
     # VIBRATORY_PHASE
     elif (self.sm_control == 3.0):
       if (self.new_vib_signal):
