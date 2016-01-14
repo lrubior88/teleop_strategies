@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+	
+  <arg name="config" default="phantom_kraft"/>
+  <arg name="interface_name" default="PK"/>
+  <arg name="rviz" default="true"/>
+    
+  <node name="$(arg interface_name)_state_machine" pkg="teleop_strategies_controller" type="state_machine.py" output="screen">
+    <rosparam command="load" file="$(find teleop_strategies_controller)/config/$(arg config).yaml"/>
+  </node>
+  
+  <node name="$(arg interface_name)_hybrid_controller" pkg="teleop_strategies_controller" type="hybrid_controller.py" output="screen">
+    <rosparam command="load" file="$(find teleop_strategies_controller)/config/$(arg config).yaml"/>
+  </node>
+  
+  <node name="$(arg interface_name)_force_handler" pkg="teleop_strategies_controller" type="force_handler.py" output="screen">
+    <rosparam command="load" file="$(find teleop_strategies_controller)/config/$(arg config).yaml"/>
+  </node>
+  
+  <include file="$(find teleop_strategies_controller)/launch/udp_$(arg config).launch"/>
+  
+  <!-- Show in Rviz -->
+  <group if="$(arg rviz)">
+    <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find teleop_strategies_controller)/config/$(arg config).rviz"/>
+  </group>
+
+</launch>

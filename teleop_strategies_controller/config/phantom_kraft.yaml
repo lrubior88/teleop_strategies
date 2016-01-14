@@ -1,0 +1,44 @@
+# devices
+master_name: phantom
+robot_name: grips
+# publish_rate in Hz
+publish_rate: 1000.0
+# rate_pos parameters
+ref_frame: world
+strategy: bubble_rate_pos
+#~ 			strategies ('bubble_rate_pos','indexing','button_rate_pos')
+n_button: 0
+bubble_radius: 0.3
+scale: 3
+hysteresis: 0.005
+axes_mapping: [x, y, z]
+
+#topics
+#~ buttons_topic: /teleop_controller/buttons
+
+# Force feedback parameters
+k_center: 40
+b_center: 2
+k_rate: 15
+b_rate: 0.0
+rate_gain: 0.002
+vibration:
+  a: 1.0
+  c: 0.4
+  frequency: 30.0
+  duration: 0.3
+
+# Rotation parameter to synchronize rotation axis
+axes_arot_3: [-1, 0, 0]
+angle_arot_3: 0.0
+axes_arot_2: [0, -1, 0]
+angle_arot_2: 0.0
+axes_arot_1: [-1, 0, 0]
+angle_arot_1: 0.0
+# Rotation parameter to synchronize rotation movement
+axes_mrot_3: [1, 0, 0]
+angle_mrot_3: 0.0
+axes_mrot_2: [0, -1, 0]
+angle_mrot_2: 0.0
+axes_mrot_1: [-1, 0, 0]
+angle_mrot_1: 0.0
