@@ -65,7 +65,6 @@ class UDP_receive_info:
     rospy.on_shutdown(self.shutdown_hook)
 
     while True:
-      #~ try:
         data,addr=self.read_socket.recvfrom(1024)
         if data:
             
@@ -135,17 +134,12 @@ class UDP_receive_info:
                     f_msg.wrench.torque.z = forces[5] * self.unit_scale             
                 
                 self.force_topic_pub.publish(f_msg)
-      #~ except:
-        #~ pass
                 
   def read_parameter(self, name, default):
     if not rospy.has_param(name):
       rospy.logwarn('Parameter [%s] not found, using default: %s' % (name, default))
     return rospy.get_param(name, default)
         
-  #~ def loginfo(self, msg):
-    #~ rospy.logwarn(self.colors.OKBLUE + str(msg) + self.colors.ENDC)
-
   def shutdown_hook(self):
     # Do some cleaning depending on the app
     self.read_socket.close()
@@ -154,4 +148,4 @@ class UDP_receive_info:
 if __name__ == '__main__':
   node_name = os.path.splitext(os.path.basename(__file__))[0]
   rospy.init_node(node_name)
-  interface = Receive_udp_info()
+  interface = UDP_receive_info()

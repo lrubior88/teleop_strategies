@@ -66,6 +66,9 @@ class UDP_send_info:
     # Set up write socket
     self.write_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     
+    # Register rospy shutdown hook
+    rospy.on_shutdown(self.shutdown_hook)
+    
     self.timer = rospy.Timer(rospy.Duration(1.0/self.publish_rate), self.send_udp)
     rospy.spin()
 
@@ -140,8 +143,6 @@ class UDP_send_info:
         # Send Buffer value
         self.write_socket.sendto(buff.getvalue(), (self.write_ip, self.write_port))
    
-    except struct.error, se: self._check_types(se)
-    except TypeError, te: self._check_types(te)
     except socket.error, e:
         result = self.write_socket.bind((self.write_ip,self.write_port))
         if result:
@@ -151,9 +152,13 @@ class UDP_send_info:
     if not rospy.has_param(name):
       rospy.logwarn('Parameter [%s] not found, using default: %s' % (name, default))
     return rospy.get_param(name, default)
-
+    
+  def shutdown_hook(self):
+    # Do some cleaning depending on the app
+    self.write_socket.close()
+    pass
 
 if __name__ == '__main__':
   node_name = os.path.splitext(os.path.basename(__file__))[0]
   rospy.init_node(node_name)
-  interface = Send_udp_info()
+  interface = UDP_send_info()
