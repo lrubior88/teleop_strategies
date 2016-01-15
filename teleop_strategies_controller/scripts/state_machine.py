@@ -5,7 +5,7 @@ import rospy
 from std_msgs.msg import Float64, Bool
 from geometry_msgs.msg import PoseStamped, WrenchStamped, TwistStamped
 #~ from geometry_msgs.msg import Vector3, Point, Quaternion, Transform
-from teleop_msgs.msg import Button2
+from teleop_msgs.msg import Button5
 
 # State Machine
 import smach
@@ -103,10 +103,8 @@ class StateMachine:
     self.robot_gripper_pub = rospy.Publisher(self.robot_gripper_topic, Float64)
     rospy.Subscriber(self.master_pose_topic, PoseStamped, self.cb_master_pose)
     rospy.Subscriber(self.robot_collision_topic, Bool, self.cb_robot_collision)
-    if (self.n_button == 1):
-        rospy.Subscriber(self.buttons_topic, Float64, self.cb_button1)
-    elif (self.n_button == 2):
-        rospy.Subscriber(self.buttons_topic, Button2, self.cb_button2)
+    if (self.n_button > 0):
+        rospy.Subscriber(self.buttons_topic, Button5, self.cb_button)
 
     self.loginfo('Waiting for [%s] topic' % (self.master_pose_topic))
     while not rospy.is_shutdown():
@@ -177,10 +175,10 @@ class StateMachine:
     elif (self.strategy == "button_rate_pos"):
       if (self.activated_button[0]):
         self.activated_button[0] = False
-        self.sm_control_pub.publish(2.0)
+        self.sm_control_pub.publish(4.0)
         self.previous_state = "pos"
         self.loginfo('State machine transitioning: POSITION_CONTROL-->RATE_CONTROL')
-        return 'rate'      
+        return 'center'      
       else:
         self.sm_control_pub.publish(1.0)
         return 'pos'
@@ -246,10 +244,10 @@ class StateMachine:
       elif (self.strategy == "button_rate_pos"):
         if (self.activated_button[0]):
           self.activated_button[0] = False
-          self.sm_control_pub.publish(1.0)
+          self.sm_control_pub.publish(4.0)
           self.previous_state = "rate"
           self.loginfo('State machine transitioning: RATE_CONTROL-->POSITION_CONTROL')
-          return 'pos'      
+          return 'center'      
         else:
           self.sm_control_pub.publish(2.0)
           return 'rate'
@@ -311,22 +309,20 @@ class StateMachine:
 
   def cb_robot_collision(self, msg):
     self.robot_collision = msg.data
-    
-  def cb_button1(self,msg):
-    button_value = msg.data
-    if ((button_value != 0.0) and (button_value != self.button_value[0])):
-        self.activated_button[0] = True
-    self.button_value[0] = button_value
 
-  def cb_button2(self,msg):
-    button_value_1 = msg.button_1
-    button_value_2 = msg.button_2
-    if ((button_value_1 != 0.0) and (button_value_1 != self.button_value[0])):
-        self.activated_button[0] = True
-    self.button_value[0] = button_value_1   
-    if ((button_value_2 != 0.0) and (button_value_2 != self.button_value[0])):
-        self.activated_button[1] = True
-    self.button_value[1] = button_value_2
+  def cb_button(self,msg):
+    
+    new_button_value = dict()
+    new_button_value[0] = msg.button_1
+    new_button_value[1] = msg.button_2
+    new_button_value[2] = msg.button_3
+    new_button_value[3] = msg.button_4
+    new_button_value[4] = msg.button_5
+
+    for i in range(self.n_button):
+        if ((new_button_value[i] != 0.0) and (new_button_value[i] != self.button_value[i])):
+            self.activated_button[i] = True
+        self.button_value[i] = new_button_value[i]   
 
   def loginfo(self, msg):
     rospy.logwarn(self.colors.OKBLUE + str(msg) + self.colors.ENDC)

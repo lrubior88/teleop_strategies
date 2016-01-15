@@ -82,6 +82,9 @@ class Force_handler:
 
     #Timer for publish forces
     self.timer = rospy.Timer(rospy.Duration(1.0/self.publish_frequency), self.send_feedback)
+    
+    # Register rospy shutdown hook
+    rospy.on_shutdown(self.shutdown_hook)
 
     rospy.spin()
     
@@ -118,7 +121,10 @@ class Force_handler:
     if not rospy.has_param(name):
       rospy.logwarn('Parameter [%s] not found, using default: %s' % (name, default))
     return rospy.get_param(name, default)
-
+    
+  def shutdown_hook(self):
+    # Stop the publisher timer
+    self.timer.shutdown()
 
   def send_feedback(self, event):
     # POSITION_CONTROL

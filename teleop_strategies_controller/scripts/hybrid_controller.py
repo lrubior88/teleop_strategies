@@ -88,8 +88,9 @@ class HybridController:
     self.robot_pos = None
     self.robot_rot = np.array([0.0, 0.0, 0.0, 1.0])
     self.master_vel = np.array([0.0, 0.0, 0.0])
-    self.slave_synch_pos = np.zeros(3)
-    self.slave_synch_rot = np.array([0.0, 0.0, 0.0, 1.0])
+    self.master_synch_pos = np.zeros(3)
+    self.robot_synch_pos = np.zeros(3)
+    self.robot_synch_rot = np.array([0.0, 0.0, 0.0, 1.0])
     self.sm_control = 0.0
     self.new_sm_signal = True
     
@@ -192,8 +193,10 @@ class HybridController:
         self.command_rot = np.array(self.robot_rot)
         if (self.strategy == 'bubble_rate_pos'):
             self.draw_position_region(self.robot_synch_pos)
+        elif (self.strategy == 'indexing'):
+			self.master_synch_pos = self.master_pos
       else:
-        self.command_pos = self.robot_synch_pos + (self.master_pos * self.scale)
+        self.command_pos = self.robot_synch_pos + ((self.master_pos - self.master_synch_pos) * self.scale)
         self.command_rot = np.array(self.master_rot)
 
     # RATE_CONTROL

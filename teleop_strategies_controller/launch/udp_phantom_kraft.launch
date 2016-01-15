@@ -35,6 +35,7 @@
   <node name="master_$(arg master_name)_UDP_receive_button_button" pkg="teleop_strategies_controller" type="UDP_receive_info.py" output="screen">
     <param name="type_info" type="string" value="button_2"/>
     <param name="button_topic" type="string" value="/master_$(arg master_name)/button"/>
+    <param name="button_offset" type="int" value="0"/>
     <param name="read_ip" type="string" value="$(arg system_ip)"/>
     <param name="read_port" type="int" value="$(arg system_master_button_port)"/>
     <param name="publish_rate" type="double" value="$(arg publish_rate)"/>
@@ -66,7 +67,7 @@
   
   <!-- Send Robot UDP Info -->
 <!--
-  <node name="master_$(arg robot_name)_UDP_send_force" pkg="teleop_strategies_controller" type="UDP_send_info.py" output="screen">
+  <node name="robot_$(arg robot_name)_UDP_send_force" pkg="teleop_strategies_controller" type="UDP_send_info.py" output="screen">
     <param name="type_info" type="string" value="pose"/>
     <param name="pose_topic" type="string" value="/robot_$(arg robot_name)/ik_command"/>
     <param name="write_ip" type="string" value="$(arg robot_ip)"/>

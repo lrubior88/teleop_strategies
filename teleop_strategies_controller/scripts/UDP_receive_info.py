@@ -45,10 +45,11 @@ class UDP_receive_info:
         self.vel_topic_pub = rospy.Publisher(self.vel_topic, TwistStamped)
     elif (self.type_info.split('_')[0] == "button"):
         self.button_topic = self.read_parameter('~button_topic', '/master_phantom/button')
+        self.button_offset = self.read_parameter('~button_offset', 0)
         n = int(self.type_info.split('_')[1])
         self.button_topic_pub = dict()
         for i in range (n):
-            self.button_topic_pub[i] = rospy.Publisher(self.button_topic + '_' + str(i+1), Float64)
+            self.button_topic_pub[i] = rospy.Publisher(self.button_topic + '_' + str(i+1+self.button_offset), Float64)
     elif (self.type_info.split('_')[0] == "force"):
         self.force_topic = self.read_parameter('~force_topic', '/master_phantom/force')
         self.force_topic_pub = rospy.Publisher(self.force_topic, WrenchStamped)
