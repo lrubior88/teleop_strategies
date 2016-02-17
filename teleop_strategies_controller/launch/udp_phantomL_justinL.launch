@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<launch>
+ 
+  <arg name="master_name"               default="phantomL"/>
+  <arg name="robot_name"                default="justinL"/>
+  <arg name="publish_rate"              default="1000.0"/>  
+  <arg name="ref_frame"                 default="world"/>
+    
+  <arg name="system_ip"                 default="10.1.8.120"/>
+  <arg name="system_master_pose_port"   default="34000"/>
+  <arg name="system_master_button_port" default="34001"/>
+  <arg name="system_robot_pose_port"    default="17620"/> 
+  <arg name="system_robot_force_port"   default="17621"/>
+  <arg name="system_robot_aux_port"     default="17622"/>
+   
+  <arg name="master_ip"                 default="10.1.8.120"/>
+  <arg name="master_force_port"         default="33000"/>
+  <arg name="master_units"              default="mm"/>
+    
+  <arg name="robot_ip"                  default="10.1.8.100"/>
+  <arg name="robot_pose_port"           default="34340"/>
+  <arg name="robot_aux_port"            default="34341"/>
+  <arg name="robot_units"               default="m"/>
+
+  
+  <!-- Receive Master UDP Info -->
+  <node name="master_$(arg master_name)_UDP_receive_pose" pkg="teleop_strategies_controller" type="UDP_receive_info.py" output="screen">
+    <param name="type_info" type="string" value="pose_vel"/>
+    <param name="pose_topic" type="string" value="/master_$(arg master_name)/pose"/>
+    <param name="vel_topic" type="string" value="/master_$(arg master_name)/velocity"/>
+    <param name="read_ip" type="string" value="$(arg system_ip)"/>
+    <param name="read_port" type="int" value="$(arg system_master_pose_port)"/>
+    <param name="publish_rate" type="double" value="$(arg publish_rate)"/>
+    <param name="ref_frame" type="string" value="$(arg ref_frame)"/>
+    <param name="units" type="string" value="$(arg master_units)"/>
+  </node>
+  
+  <node name="master_$(arg master_name)_UDP_receive_button" pkg="teleop_strategies_controller" type="UDP_receive_info.py" output="screen">
+    <param name="type_info" type="string" value="button_2"/>
+    <param name="button_topic" type="string" value="/master_$(arg master_name)/button"/>
+    <param name="button_offset" type="int" value="0"/>
+    <param name="read_ip" type="string" value="$(arg system_ip)"/>
+    <param name="read_port" type="int" value="$(arg system_master_button_port)"/>
+    <param name="publish_rate" type="double" value="$(arg publish_rate)"/>
+    <param name="ref_frame" type="string" value="$(arg ref_frame)"/>
+    <param name="units" type="string" value="$(arg master_units)"/>
+  </node>
+  
+  <!-- Send Master UDP Info -->
+  <node name="master_$(arg master_name)_UDP_send_force" pkg="teleop_strategies_controller" type="UDP_send_info.py" output="screen">
+    <param name="type_info" type="string" value="force_3"/>
+    <param name="force_topic" type="string" value="/master_$(arg master_name)/force_feedback"/>
+    <param name="write_ip" type="string" value="$(arg master_ip)"/>
+    <param name="write_port" type="int" value="$(arg master_force_port)"/>
+    <param name="publish_rate" type="double" value="$(arg publish_rate)"/>
+  </node>
+  
+  <!-- Receive Robot UDP Info -->
+  <node name="robot_$(arg robot_name)_UDP_receive_pose" pkg="teleop_strategies_controller" type="UDP_receive_info.py" output="screen">
+    <param name="type_info" type="string" value="pose"/>
+    <param name="pose_topic" type="string" value="/robot_$(arg robot_name)/pose"/>
+    <param name="read_ip" type="string" value="$(arg system_ip)"/>
+    <param name="read_port" type="int" value="$(arg system_robot_pose_port)"/>
+    <param name="publish_rate" type="double" value="$(arg publish_rate)"/>
+    <param name="ref_frame" type="string" value="$(arg ref_frame)"/>
+    <param name="units" type="string" value="$(arg robot_units)"/>
+  </node>
+  
+  <node name="robot_$(arg robot_name)_UDP_receive_force" pkg="teleop_strategies_controller" type="UDP_receive_info.py" output="screen">
+    <param name="type_info" type="string" value="force_3"/>
+    <param name="force_topic" type="string" value="/robot_$(arg robot_name)/external_forces"/>
+    <param name="read_ip" type="string" value="$(arg system_ip)"/>
+    <param name="read_port" type="int" value="$(arg system_robot_force_port)"/>
+    <param name="publish_rate" type="double" value="$(arg publish_rate)"/>
+    <param name="ref_frame" type="string" value="$(arg ref_frame)"/>
+    <param name="units" type="string" value="$(arg robot_units)"/>
+  </node>
+  
+  <node name="robot_$(arg robot_name)_UDP_receive_counter" pkg="teleop_strategies_controller" type="UDP_receive_info.py" output="screen">
+    <param name="type_info" type="string" value="button_1"/>
+    <param name="button_topic" type="string" value="/aux/counter"/>
+    <param name="read_ip" type="string" value="$(arg system_ip)"/>
+    <param name="read_port" type="int" value="$(arg system_robot_aux_port)"/>
+    <param name="publish_rate" type="double" value="$(arg publish_rate)"/>
+    <param name="ref_frame" type="string" value="$(arg ref_frame)"/>
+  </node>
+  
+  <!-- Send Robot UDP Info -->
+  <node name="robot_$(arg robot_name)_UDP_send_pose" pkg="teleop_strategies_controller" type="UDP_send_info.py" output="screen">
+    <param name="type_info" type="string" value="pose"/>
+    <param name="pose_topic" type="string" value="/robot_$(arg robot_name)/ik_command"/>
+    <param name="write_ip" type="string" value="$(arg robot_ip)"/>
+    <param name="write_port" type="int" value="$(arg robot_pose_port)"/>
+    <param name="publish_rate" type="double" value="$(arg publish_rate)"/>
+  </node>
+     
+  <node name="robot_$(arg robot_name)_UDP_send_signals" pkg="teleop_strategies_controller" type="UDP_send_info.py" output="screen">
+    <param name="type_info" type="string" value="button_2"/>
+    <param name="button_topic" type="string" value="/master_$(arg master_name)/button_2"/>
+    <param name="button_topic_2" type="string" value="/aux/counter_1"/>
+    <param name="write_ip" type="string" value="$(arg robot_ip)"/>
+    <param name="write_port" type="int" value="$(arg robot_aux_port)"/>
+    <param name="publish_rate" type="double" value="$(arg publish_rate)"/>
+  </node>
+     
+</launch>
