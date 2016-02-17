@@ -28,7 +28,7 @@ class UDP_send_info:
     
     if (self.type_info == "pose"):
         self.pose_topic = self.read_parameter('~pose_topic', '/master_phantom/pose')
-        rospy.Subscriber(self.pose_topic_name, PoseStamped, self.pose_command_cb)
+        rospy.Subscriber(self.pose_topic, PoseStamped, self.pose_command_cb)
         while not rospy.is_shutdown():
             if (self.pose_msg == None):
                 rospy.sleep(0.01)
@@ -47,6 +47,11 @@ class UDP_send_info:
     elif (self.type_info.split('_')[0] == "button"):
         self.button_topic = self.read_parameter('~button_topic', '/master_phantom/button')
         rospy.Subscriber(self.button_topic, Float64, self.button_command_cb)
+        n = int(self.type_info.split('_')[1])
+        if (n == 2):
+            self.button_topic_2 = self.read_parameter('~button_topic_2', '/master_phantom/button_2')
+            rospy.Subscriber(self.button_topic_2, Float64, self.button_command_cb_2)
+            
         while not rospy.is_shutdown():
             if (self.button_msg == None):
                 rospy.sleep(0.01)
@@ -80,6 +85,9 @@ class UDP_send_info:
 
   def button_command_cb(self, msg):
     self.button_msg = msg
+    
+  def button_command_cb_2(self, msg):
+    self.button_msg_2 = msg
 
   def force_command_cb(self, msg):
     self.force_msg = msg
@@ -121,7 +129,11 @@ class UDP_send_info:
                 
         elif (self.type_info.split('_')[0] == "button"):
             
-            buff.write(_struct_d[0].pack(self.button_msg))
+            n = int(self.type_info.split('_')[1])
+            if (n==1):
+                buff.write(_struct_d[0].pack(self.button_msg))
+            elif (n==2):
+                buff.write(_struct_d[1].pack(self.button_msg, self.button_msg_2))
                 
         elif (self.type_info.split('_')[0] == "force"):
             

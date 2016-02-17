@@ -5,7 +5,7 @@ robot_name: grips
 publish_rate: 1000.0
 # rate_pos parameters
 ref_frame: world
-strategy: indexing
+strategy: bubble_rate_pos
 #~          strategies ('bubble_rate_pos','indexing','button_rate_pos')
 bubble_radius: 0.3
 scale: 3
@@ -13,7 +13,7 @@ hysteresis: 0.005
 axes_mapping: [x, y, z]
 
 # buttons
-n_button: 2
+n_button: 0
 buttons_in: [1, 2]
 buttons_topic: /teleop_controller/buttons
 

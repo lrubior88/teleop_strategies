@@ -177,7 +177,7 @@ class StateMachine:
         self.activated_button[0] = False
         self.sm_control_pub.publish(4.0)
         self.previous_state = "pos"
-        self.loginfo('State machine transitioning: POSITION_CONTROL-->RATE_CONTROL')
+        self.loginfo('State machine transitioning: POSITION_CONTROL-->GO_TO_CENTER')
         return 'center'      
       else:
         self.sm_control_pub.publish(1.0)
@@ -246,7 +246,7 @@ class StateMachine:
           self.activated_button[0] = False
           self.sm_control_pub.publish(4.0)
           self.previous_state = "rate"
-          self.loginfo('State machine transitioning: RATE_CONTROL-->POSITION_CONTROL')
+          self.loginfo('State machine transitioning: RATE_CONTROL-->GO_TO_CENTER')
           return 'center'      
         else:
           self.sm_control_pub.publish(2.0)
