@@ -131,9 +131,9 @@ class UDP_send_info:
             
             n = int(self.type_info.split('_')[1])
             if (n==1):
-                buff.write(_struct_d[0].pack(self.button_msg))
+                buff.write(_struct_d[0].pack(self.button_msg.data))
             elif (n==2):
-                buff.write(_struct_d[1].pack(self.button_msg, self.button_msg_2))
+                buff.write(_struct_d[1].pack(self.button_msg.data, self.button_msg_2.data))
                 
         elif (self.type_info.split('_')[0] == "force"):
             
